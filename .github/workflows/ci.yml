@@ -21,6 +21,7 @@ jobs:
           path: lampy
   cache:
     needs: config
+    runs-on: self-hosted
     steps:
       - name: Cache npm packages
         id: npm-cache
@@ -42,6 +43,7 @@ jobs:
             ${{ runner.os }}-composer-
   init:
     needs: cache
+    runs-on: self-hosted
     steps:
       - name: Install npm dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
@@ -52,6 +54,7 @@ jobs:
         run: make lampy
   docker:
     needs: init
+    runs-on: self-hosted
     steps:
       - name: 'Image pull'
         run: make docker image-pull
