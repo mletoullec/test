@@ -78,8 +78,6 @@ jobs:
         run: make node_modules
       - name: 'SET BDD'
         run: make bddset
-      - name: 'Launch Lampy'
-        run: make lampy
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
@@ -98,6 +96,8 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: init
+      - name: 'Launch Lampy'
+        run: make lampy
       - name: 'Image pull'
         run: make docker image-pull
       - name: 'Build containers'
