@@ -1,7 +1,7 @@
 name: Continuous Integration
 on: [push]
 jobs:
-  tests:
+  config:
     runs-on: ${{ matrix.operating-system }}
     strategy:
       fail-fast: false
@@ -19,6 +19,9 @@ jobs:
           submodules: recursive
           repository: koromerzhin/lampy
           path: lampy
+  cache:
+    needs: config
+    steps:
       - name: Cache npm packages
         id: npm-cache
         uses: actions/cache@v2
@@ -37,6 +40,9 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/apps/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
+  init:
+    needs: cache
+    steps:
       - name: Install npm dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: make node_modules
@@ -44,6 +50,9 @@ jobs:
         run: make bddset
       - name: 'Launch Lampy'
         run: make lampy
+  docker:
+    needs: init
+    steps:
       - name: 'Image pull'
         run: make docker image-pull
       - name: 'Build containers'
