@@ -8,6 +8,7 @@ jobs:
       matrix:
         operating-system: [ubuntu-22.04]
         php-versions: ["7.4"]
+        node-version: [16.x]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -32,6 +33,7 @@ jobs:
       matrix:
         operating-system: [ubuntu-22.04]
         php-versions: ["7.4"]
+        node-version: [16.x]
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
@@ -68,6 +70,7 @@ jobs:
       matrix:
         operating-system: [ubuntu-22.04]
         php-versions: ["7.4"]
+        node-version: [16.x]
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
@@ -91,6 +94,7 @@ jobs:
       matrix:
         operating-system: [ubuntu-22.04]
         php-versions: ["7.4"]
+        node-version: [16.x]
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v2
