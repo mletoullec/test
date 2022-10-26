@@ -28,7 +28,7 @@ jobs:
         with:
           name: config
           path: ${{ github.workspace }}
-  cache:
+  init:
     needs: config
     runs-on: ${{ matrix.operating-system }}
     strategy:
@@ -45,46 +45,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: config
-      - name: Cache npm packages
-        id: npm-cache
-        uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node
-      - name: Cache Composer packages
-        id: composer-cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            apps/bin
-            apps/vendor
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/apps/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v2
-        with:
-          name: cache
-          path: ${{ github.workspace }}
-  init:
-    needs: cache
-    runs-on: ${{ matrix.operating-system }}
-    strategy:
-      fail-fast: false
-      matrix:
-        operating-system: [ubuntu-22.04]
-        php-versions: ["7.4"]
-        node-version: [16.x]
-    steps:
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v2
-        with:
-          name: cache
       - name: Install npm dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: make node_modules
