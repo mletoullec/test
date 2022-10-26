@@ -19,13 +19,11 @@ jobs:
           submodules: recursive
           repository: koromerzhin/lampy
           path: lampy
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: config
-          path: release.zip
+          path: ${{ github.workspace }}
   cache:
     needs: config
     runs-on: ${{ matrix.operating-system }}
@@ -39,8 +37,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: config
-      - name: unzip artifact for deployment
-        run: unzip release.zip
       - name: Cache npm packages
         id: npm-cache
         uses: actions/cache@v2
@@ -59,13 +55,11 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/apps/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: cache
-          path: release.zip
+          path: ${{ github.workspace }}
   init:
     needs: cache
     runs-on: ${{ matrix.operating-system }}
@@ -79,8 +73,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: cache
-      - name: unzip artifact for deployment
-        run: unzip release.zip
       - name: Install npm dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: make node_modules
@@ -88,13 +80,11 @@ jobs:
         run: make bddset
       - name: 'Launch Lampy'
         run: make lampy
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: init
-          path: release.zip
+          path: ${{ github.workspace }}
   docker:
     needs: init
     runs-on: ${{ matrix.operating-system }}
@@ -108,8 +98,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: init
-      - name: unzip artifact for deployment
-        run: unzip release.zip
       - name: 'Image pull'
         run: make docker image-pull
       - name: 'Build containers'
@@ -118,10 +106,8 @@ jobs:
         run: make sleep 60
       - name: 'docker ls'
         run: make docker ls
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: docker
-          path: release.zip
+          path: ${{ github.workspace }}
