@@ -1,0 +1,12 @@
+node_modules
+
+apps/*.phar
+## to delete >>
+apps/bin/
+/apps/.env
+apps/config
+apps/src/
+apps/public/
+apps/composer.lock
+apps/symfony.lock
+## << to delete
